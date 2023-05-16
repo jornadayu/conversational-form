@@ -22,7 +22,7 @@ jobs:
   new_release:
     permissions:
       id-token: write
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -109,6 +109,6 @@ jobs:
           files: |
             dist/*
           body: |
-            https://www.npmjs.com/package/yu-open-lib/v/${{ fromJson(steps.new_version.outputs.packageJson).version }}
+            https://npmjs.com/package/@jornadayu/conversational-form/v/${{ fromJson(steps.new_version.outputs.packageJson).version }}
 
             ${{steps.github_release.outputs.changelog}}
