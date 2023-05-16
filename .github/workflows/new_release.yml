@@ -81,7 +81,7 @@ jobs:
           echo "::set-output name=packageJson::$content"
 
       - name: Publish package
-        run: yarn publish --provenance --access public
+        run: npm publish --provenance --access public
         if: ${{ github.event.inputs.fakeDeploy == 'false' }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -109,4 +109,3 @@ jobs:
             https://www.npmjs.com/package/yu-open-lib/v/${{ fromJson(steps.new_version.outputs.packageJson).version }}
 
             ${{steps.github_release.outputs.changelog}}
-      - run: npm publish --provenance --access public
