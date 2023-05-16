@@ -80,6 +80,9 @@ jobs:
           # end of optional handling for multi line json
           echo "::set-output name=packageJson::$content"
 
+      - name: Build
+        run: yarn build
+
       - name: Publish package
         run: npm publish --provenance --access public
         if: ${{ github.event.inputs.fakeDeploy == 'false' }}
