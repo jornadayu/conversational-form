@@ -56,7 +56,7 @@ const Chatbot: React.FC = () => {
       'cf-questions': 'Thanks for your time! Reload the page to start again.',
       tag: 'cf-robot-message'
     }
-  ] as FormlessTag[]
+  ] satisfies FormlessTag[]
 
   useConversationalForm({
     onSubmit(data) {
