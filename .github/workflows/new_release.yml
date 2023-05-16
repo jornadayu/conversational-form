@@ -87,6 +87,9 @@ jobs:
           git add src/stories
           git commit --amend --no-edit
 
+      - name: Build
+        run: yarn build
+
       - name: Publish package
         run: npm publish --provenance --access public
         if: ${{ github.event.inputs.fakeDeploy == 'false' }}
