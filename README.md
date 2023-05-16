@@ -42,37 +42,41 @@ import { useConversationalForm, FormlessTag } from '@jornadayu/conversational-fo
 import '@jornadayu/conversational-form/dist/style.css'
 
 const Chatbot = () => {
-const tags = [{
-   tag: 'cf-robot-message',
-   name: 'name',
-   id: '0',
-   'cf-questions': 'Hello, this is a example of conversational form.'
- },
- {
-   name: 'name',
-   id: '1',
-   'cf-questions': 'Whats your name?',
-   tag: 'input'
- },
- {
-   id: '2',
-   multiple: true,
-   name: 'my-multi-select',
-   'cf-questions': 'What are your favorite colors?',
-   children: [
-     { tag: 'option', value: 'red', 'cf-label': 'Red' },
-     { tag: 'option', value: 'green', 'cf-label': 'Green' }],
- },
- {
-   id: '3',
-   name: 'my-single-select',
-   'cf-questions': 'Do you like this example?',
-   children: [
-     { tag: 'option', value: 'yes', 'cf-label': 'Yes' },
-     { tag: 'option', value: 'no', 'cf-label': 'No' }
-   ],
-   tag: 'select'
- }] as FormlessTag[]
+const tags = [
+  {
+    id: '0',
+    tag: 'cf-robot-message',
+    name: 'name',
+    'cf-questions': 'Hello, this is a example of conversational form.'
+  },
+  {
+    id: '1',
+    tag: 'input',
+    name: 'name',
+    'cf-questions': 'Whats your name?'
+  },
+  {
+    id: '2',
+    tag: 'select',
+    multiple: true,
+    name: 'my-multi-select',
+    'cf-questions': 'What are your favorite colors?',
+    children: [
+      { tag: 'option', value: 'red', 'cf-label': 'Red' },
+      { tag: 'option', value: 'green', 'cf-label': 'Green' }
+    ]
+  },
+  {
+    id: '3',
+    tag: 'select',
+    name: 'my-single-select',
+    'cf-questions': 'Do you like this example?',
+    children: [
+      { tag: 'option', value: 'yes', 'cf-label': 'Yes' },
+      { tag: 'option', value: 'no', 'cf-label': 'No' }
+    ]
+  }
+] satisfies FormlessTag[]
 
 useConversationalForm({
  onSubmit(data) {
