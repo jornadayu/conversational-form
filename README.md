@@ -38,6 +38,10 @@ See more at [examples](./examples/src/Chatbot.tsx)
 ## Code example:
 
 ```bash
+import { useConversationalForm, FormlessTag } from '@jornadayu/conversational-form'
+import '@jornadayu/conversational-form/dist/style.css'
+
+const Chatbot = () => {
 const tags = [{
    tag: 'cf-robot-message',
    name: 'name',
@@ -68,7 +72,7 @@ const tags = [{
      { tag: 'option', value: 'no', 'cf-label': 'No' }
    ],
    tag: 'select'
- }]
+ }] as FormlessTag[]
 
 useConversationalForm({
  onSubmit(data) {
@@ -87,4 +91,5 @@ useConversationalForm({
 })
 
 return <div />
+}
 ```
