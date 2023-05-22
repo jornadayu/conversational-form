@@ -49,7 +49,7 @@ jobs:
         run: |
           BUILD_OUTPUT=$(yarn build)
           echo "$BUILD_OUTPUT"
-          GZIP_SIZE=$(cat -v <<< "$BUILD_OUTPUT" | grep 'index.js.*gz' | sed -r 's/.*\^\[\[31m([0-9]+) kB\^\[\[39m.*/\ kB/' | cut -f 2- -d ' ' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2};?)?)?[mGK]//g")
+          GZIP_SIZE=$(cat -v <<< "$BUILD_OUTPUT" | grep 'index.js.*gz' | sed -r 's/.*\^\[\[31m([0-9]+) kB\^\[\[39m.*/\ kB/' | cut -f 2- -d ' ' | sed -r "s/\\x1B[\\x5d\[]([0-9]{1,3}(;[0-9]{1,3})?(;[0-9]{1,3})?)?[mGK]?//g")
           echo $GZIP_SIZE
           echo "::set-output name=gzipSize::$GZIP_SIZE"
 
