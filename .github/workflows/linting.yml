@@ -49,7 +49,7 @@ jobs:
         run: |
           BUILD_OUTPUT=$(yarn build)
           echo "$BUILD_OUTPUT"
-          GZIP_SIZE=$(cat -v <<< "$BUILD_OUTPUT" | awk -F' │ ' '{for(i=1;i<=NF;i++) if($i ~ /gzip:/) print $1, $i}' | sed 's/gzip: //')
+          GZIP_SIZE=$(cat -v <<< "$BUILD_OUTPUT" | grep -o -E 'gzip: [0-9]+(\.[0-9]+)?\s?kB' | tail -n 1 | cut -d " " -f2-)
           echo $GZIP_SIZE
           echo "::set-output name=gzipSize::$GZIP_SIZE"
 
