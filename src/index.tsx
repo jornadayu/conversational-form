@@ -3,7 +3,10 @@ import './styles/_cf-variables.scss'
 import './styles/conversational-form-dark-custom.scss'
 
 export { useConversationalForm } from './components/chatbot/chatbot'
-export { useChatbotAutoSave } from './components/chatbot/useChatbotAutosave'
+export {
+  useChatbotAutoSave,
+  answersAsChatbotFormat
+} from './components/chatbot/useChatbotAutosave'
 
 export { ConversationalForm } from './scripts/cf/ConversationalForm'
 export { Dictionary } from './scripts/cf/data/Dictionary'
@@ -44,3 +47,5 @@ export type {
   FormlessTagType,
   FormlessTagChild
 } from './scripts/cf/ConversationalForm'
+
+export type { Answer } from './components/chatbot/useChatbotAutosave'

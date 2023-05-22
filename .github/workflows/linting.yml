@@ -48,7 +48,9 @@ jobs:
         shell: bash
         run: |
           BUILD_OUTPUT=$(yarn build)
-          GZIP_SIZE=$(cat -v <<< "$BUILD_OUTPUT" | grep 'index.js[^ ]*gz' | sed -r 's/.*\^\[\[31m([0-9]+) kB\^\[\[39m.*/\1 kB/')
+          echo "$BUILD_OUTPUT"
+          GZIP_SIZE=$(cat -v <<< "$BUILD_OUTPUT" | grep -o -E 'gzip: [0-9]+(\.[0-9]+)?\s?kB' | tail -n 1 | cut -d " " -f2-)
+          echo $GZIP_SIZE
           echo "::set-output name=gzipSize::$GZIP_SIZE"
 
       - name: Find Comment
