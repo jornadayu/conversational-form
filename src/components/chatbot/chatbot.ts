@@ -58,14 +58,16 @@ type Options = {
    * validateAlreadyAnswered: {
    *  questionVerificationTagId: 'email',
    *  validate: (email) => email !== 'email@example.com',
-   *  ifInvalidMessage: 'Email already used'
-   * }
+   *  onInvalid: (instance) => {
+   *   instance.addRobotChatResponse('Email already used')
+   *   instance.stop()
+   *  }
    * @default undefined
    * */
   validateAlreadyAnswered?: {
     questionVerificationTagId: string
     validate: (answer: string) => Promise<boolean> | boolean
-    ifInvalidMessage: string
+    onInvalid: (instance: any) => void
   }
 }
 
@@ -156,21 +158,19 @@ export const useConversationalForm: UseConversationalForm = ({
           currentQuestion.current = dto
           onStep?.(dto, answersRef.current)
 
-          if (validateAlreadyAnswered) {
-            const { questionVerificationTagId, validate, ifInvalidMessage } =
-              validateAlreadyAnswered
+          const { questionVerificationTagId, validate, onInvalid } =
+            validateAlreadyAnswered || {}
 
-            if (
-              currentQuestion.current?.tag?.id === questionVerificationTagId &&
-              currentQuestion.current?.text
-            ) {
-              if (await validate(currentQuestion.current.text)) {
-                addAnswer(dto)
-                success()
-              } else {
-                instance.addRobotChatResponse(ifInvalidMessage)
-                instance.stop()
-              }
+          if (
+            validateAlreadyAnswered &&
+            currentQuestion?.current?.tag?.id === questionVerificationTagId &&
+            currentQuestion.current.text
+          ) {
+            if (await validate?.(currentQuestion.current.text)) {
+              addAnswer(dto)
+              success()
+            } else {
+              onInvalid?.(instance)
             }
           } else {
             addAnswer(dto)
