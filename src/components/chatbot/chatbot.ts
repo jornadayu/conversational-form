@@ -52,6 +52,21 @@ type Options = {
   invalidEmailMessage?: string
   userAvatar?: string
   conversationalFormOptions?: Partial<ConversationalFormOptions>
+  /**
+   * Validate already answered questions
+   * @example
+   * validateAlreadyAnswered: {
+   *  questionVerificationTagId: 'email',
+   *  validate: (email) => email !== 'email@example.com',
+   *  ifInvalidMessage: 'Email already used'
+   * }
+   * @default undefined
+   * */
+  validateAlreadyAnswered?: {
+    questionVerificationTagId: string
+    validate: (answer: string) => Promise<boolean> | boolean
+    ifInvalidMessage: string
+  }
 }
 
 export type UseConversationalForm = {
@@ -74,7 +89,8 @@ export const useConversationalForm: UseConversationalForm = ({
   startWhen = false,
   userAvatar,
   conversationalFormOptions,
-  autoSaveOptions
+  autoSaveOptions,
+  validateAlreadyAnswered
 }) => {
   const cfInstance = useRef<ConversationalFormCf>()
   const currentQuestion = useRef<FlowDTO>()
@@ -136,10 +152,30 @@ export const useConversationalForm: UseConversationalForm = ({
         submitCallback() {
           submit()
         },
-        flowStepCallback(dto, success) {
+        async flowStepCallback(dto, success) {
+          currentQuestion.current = dto
           onStep?.(dto, answersRef.current)
-          addAnswer(dto)
-          success()
+
+          if (validateAlreadyAnswered) {
+            const { questionVerificationTagId, validate, ifInvalidMessage } =
+              validateAlreadyAnswered
+
+            if (
+              currentQuestion.current?.tag?.id === questionVerificationTagId &&
+              currentQuestion.current?.text
+            ) {
+              if (await validate(currentQuestion.current.text)) {
+                addAnswer(dto)
+                success()
+              } else {
+                instance.addRobotChatResponse(ifInvalidMessage)
+                instance.stop()
+              }
+            }
+          } else {
+            addAnswer(dto)
+            success()
+          }
         },
         ...conversationalFormOptions
       },
@@ -200,7 +236,8 @@ export const useConversationalForm: UseConversationalForm = ({
     tags,
     userAvatar,
     onStep,
-    addAnswer
+    addAnswer,
+    validateAlreadyAnswered
   ])
 
   useLayoutEffect(() => {
