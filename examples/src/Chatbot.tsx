@@ -1,11 +1,12 @@
 import {
   useConversationalForm,
-  FormlessTag
+  FormlessTag,
+  ConversationalForm
 } from '@jornadayu/conversational-form'
 import '@jornadayu/conversational-form/dist/style.css'
 
 const Chatbot: React.FC = () => {
-  const tags = [
+  const tags: FormlessTag[] = [
     {
       tag: 'cf-robot-message',
       name: 'name',
@@ -20,6 +21,16 @@ const Chatbot: React.FC = () => {
     },
     {
       id: '2',
+      name: 'did-you-answered',
+      'cf-questions': 'Did you already answered this form?',
+      children: [
+        { tag: 'option', value: 'yes', 'cf-label': 'Yes' },
+        { tag: 'option', value: 'no', 'cf-label': 'No' }
+      ],
+      tag: 'select'
+    },
+    {
+      id: '3',
       multiple: true,
       name: 'my-multi-select',
       'cf-questions': 'What are your favorite colors?',
@@ -40,25 +51,55 @@ const Chatbot: React.FC = () => {
       tag: 'select'
     },
     {
-      id: '3',
+      id: '4',
       name: 'my-single-select',
       'cf-questions': 'Do you like this example?',
       children: [
         { tag: 'option', value: 'yes', 'cf-label': 'Yes' },
+        { tag: 'option', value: 'loved', 'cf-label': 'Loved it!' },
         { tag: 'option', value: 'no', 'cf-label': 'No' }
       ],
       tag: 'select',
       multiple: undefined
     },
     {
-      id: '3',
+      id: '5',
+      name: 'appreciate_you_liked',
+      'cf-questions': 'We appreciate you liked it!',
+      'cf-conditional-my-single-select': 'yes||loved',
+      tag: 'cf-robot-message'
+    },
+    {
+      id: '6',
+      name: 'sorry_you_didnt_like',
+      'cf-questions': 'Sorry you didnt like it :/',
+      'cf-conditional-my-single-select': 'no',
+      tag: 'cf-robot-message'
+    },
+    {
+      id: '7',
       name: 'end-message',
       'cf-questions': 'Thanks for your time! Reload the page to start again.',
       tag: 'cf-robot-message'
     }
-  ] satisfies FormlessTag[]
+  ]
+
+  const autoSaveKey = 'test'
+
+  const onInvalid = (instance: ConversationalForm) => {
+    instance.addRobotChatResponse(
+      'You already answered this form. Reload the page to start again.'
+    )
+    window.localStorage.removeItem(autoSaveKey)
+  }
 
   useConversationalForm({
+    validateAlreadyAnswered: {
+      questionVerificationTagId: '2',
+      validate: (value: string) => value !== 'Yes',
+      onInvalid,
+      stopOnInvalid: true
+    },
     onSubmit(data) {
       window.alert('Data: ' + JSON.stringify(data))
     },
@@ -70,7 +111,7 @@ const Chatbot: React.FC = () => {
       suppressLog: true
     },
     autoSaveOptions: {
-      key: 'test'
+      key: autoSaveKey
     }
   })
 

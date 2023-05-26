@@ -261,10 +261,12 @@ export class FlowManager {
 
     let numConditionsFound = 0
     // find out if tagWithConditions fullfills conditions
-    this.tags.forEach((tag) => {
+    for (let i = 0; i < this.tags.length; i++) {
+      const tag = this.tags[i] as ITag | ITagGroup
       if (tag !== tagWithConditions) {
         // check if tags are fullfilled
-        tagConditions.forEach((tagCondition) => {
+        for (let j = 0; j < tagConditions.length; j++) {
+          const tagCondition = tagConditions[j] as ConditionalValue
           // only check tags where tag id or name is defined
           const tagName: string = (tag.name || tag.id || '').toLowerCase()
           if (
@@ -288,9 +290,9 @@ export class FlowManager {
               }
             }
           }
-        })
+        }
       }
-    })
+    }
 
     return false
   }
@@ -317,15 +319,17 @@ export class FlowManager {
       // this happens when editing a tag..
 
       // check if any tags has a conditional check for this.currentTag.name
-      this.tags.forEach((tag) => {
+      for (let i = 0; i < this.tags.length; i++) {
+        const tag = this.tags[i] as ITag | ITagGroup
         if (tag !== this.currentTag && tag.hasConditions()) {
           // tag has conditions so check if it also has the right conditions
           if (tag.hasConditionsFor(this.currentTag.name)) {
             foundConditionsToCurrentTag = true
             this.step = this.tags.indexOf(this.currentTag)
+            break
           }
         }
-      })
+      }
 
       // no conditional linking found, so resume flow
       if (!foundConditionsToCurrentTag) {
