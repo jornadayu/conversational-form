@@ -67,7 +67,7 @@ type Options = {
   validateAlreadyAnswered?: {
     questionVerificationTagId: string
     validate: (answer: string) => Promise<boolean> | boolean
-    onInvalid: (instance: any) => void
+    onInvalid: (instance: ConversationalFormCf) => void
   }
 }
 

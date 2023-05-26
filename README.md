@@ -46,13 +46,12 @@ See more at [examples](./examples/src/Chatbot.tsx)
 import {
   useConversationalForm,
   FormlessTag,
-  ConversationalForm,
-  Tag
+  ConversationalForm
 } from '@jornadayu/conversational-form'
 import '@jornadayu/conversational-form/dist/style.css'
 
 const Chatbot: React.FC = () => {
-  const tags = [
+  const tags: FormlessTag[] = [
     {
       tag: 'cf-robot-message',
       name: 'name',
@@ -128,7 +127,7 @@ const Chatbot: React.FC = () => {
       'cf-questions': 'Thanks for your time! Reload the page to start again.',
       tag: 'cf-robot-message'
     }
-  ] satisfies FormlessTag[]
+  ]
 
   const autoSaveKey = 'test'
 
@@ -140,7 +139,7 @@ const Chatbot: React.FC = () => {
     instance.stop()
   }
 
-  const { cfInstance } = useConversationalForm({
+  useConversationalForm({
     validateAlreadyAnswered: {
       questionVerificationTagId: '2',
       validate: (value: string) => value !== 'Yes',
@@ -151,7 +150,7 @@ const Chatbot: React.FC = () => {
     },
     autoSave: true,
     userAvatar: 'https://placehold.co/100x100',
-    tags: tags as FormlessTag[],
+    tags: tags,
     conversationalFormOptions: {
       // remove this option to show the log of the chatbot
       suppressLog: true
