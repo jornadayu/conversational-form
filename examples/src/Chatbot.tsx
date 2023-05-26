@@ -1,8 +1,7 @@
 import {
   useConversationalForm,
   FormlessTag,
-  ConversationalForm,
-  Tag
+  ConversationalForm
 } from '@jornadayu/conversational-form'
 import '@jornadayu/conversational-form/dist/style.css'
 
@@ -106,7 +105,7 @@ const Chatbot: React.FC = () => {
     },
     autoSave: true,
     userAvatar: 'https://placehold.co/100x100',
-    tags: tags as FormlessTag[],
+    tags: tags,
     conversationalFormOptions: {
       // remove this option to show the log of the chatbot
       suppressLog: true
