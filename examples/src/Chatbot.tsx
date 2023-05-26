@@ -91,14 +91,14 @@ const Chatbot: React.FC = () => {
       'You already answered this form. Reload the page to start again.'
     )
     window.localStorage.removeItem(autoSaveKey)
-    instance.stop()
   }
 
   useConversationalForm({
     validateAlreadyAnswered: {
       questionVerificationTagId: '2',
       validate: (value: string) => value !== 'Yes',
-      onInvalid
+      onInvalid,
+      stopOnInvalid: true
     },
     onSubmit(data) {
       window.alert('Data: ' + JSON.stringify(data))

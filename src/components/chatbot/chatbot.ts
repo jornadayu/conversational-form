@@ -61,13 +61,18 @@ type Options = {
    *  onInvalid: (instance) => {
    *   instance.addRobotChatResponse('Email already used')
    *   instance.stop()
-   *  }
+   *  },
+   *  stopOnInvalid: true
+   * }
+   *
    * @default undefined
    * */
   validateAlreadyAnswered?: {
     questionVerificationTagId: string
     validate: (answer: string) => Promise<boolean> | boolean
     onInvalid: (instance: ConversationalFormCf) => void
+    /** @default true */
+    stopOnInvalid?: boolean
   }
 }
 
@@ -158,8 +163,12 @@ export const useConversationalForm: UseConversationalForm = ({
           currentQuestion.current = dto
           onStep?.(dto, answersRef.current)
 
-          const { questionVerificationTagId, validate, onInvalid } =
-            validateAlreadyAnswered || {}
+          const {
+            questionVerificationTagId,
+            validate,
+            onInvalid,
+            stopOnInvalid = true
+          } = validateAlreadyAnswered || {}
 
           if (
             validateAlreadyAnswered &&
@@ -171,6 +180,7 @@ export const useConversationalForm: UseConversationalForm = ({
               success()
             } else {
               onInvalid?.(instance)
+              if (stopOnInvalid) instance.stop()
             }
           } else {
             addAnswer(dto)
