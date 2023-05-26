@@ -22,6 +22,16 @@ const Chatbot: React.FC = () => {
     },
     {
       id: '2',
+      name: 'did-you-answered',
+      'cf-questions': 'Did you already answered this form?',
+      children: [
+        { tag: 'option', value: 'yes', 'cf-label': 'Yes' },
+        { tag: 'option', value: 'no', 'cf-label': 'No' }
+      ],
+      tag: 'select'
+    },
+    {
+      id: '3',
       multiple: true,
       name: 'my-multi-select',
       'cf-questions': 'What are your favorite colors?',
@@ -42,21 +52,12 @@ const Chatbot: React.FC = () => {
       tag: 'select'
     },
     {
-      id: '3',
-      name: 'did-you-answered',
-      'cf-questions': 'Did you already answered this form?',
-      children: [
-        { tag: 'option', value: 'yes', 'cf-label': 'Yes' },
-        { tag: 'option', value: 'no', 'cf-label': 'No' }
-      ],
-      tag: 'select'
-    },
-    {
       id: '4',
       name: 'my-single-select',
       'cf-questions': 'Do you like this example?',
       children: [
         { tag: 'option', value: 'yes', 'cf-label': 'Yes' },
+        { tag: 'option', value: 'loved', 'cf-label': 'Loved it!' },
         { tag: 'option', value: 'no', 'cf-label': 'No' }
       ],
       tag: 'select',
@@ -64,88 +65,25 @@ const Chatbot: React.FC = () => {
     },
     {
       id: '5',
+      name: 'appreciate_you_liked',
+      'cf-questions': 'We appreciate you liked it!',
+      'cf-conditional-my-single-select': 'yes||loved',
+      tag: 'cf-robot-message'
+    },
+    {
+      id: '6',
+      name: 'sorry_you_didnt_like',
+      'cf-questions': 'Sorry you didnt like it :/',
+      'cf-conditional-my-single-select': 'no',
+      tag: 'cf-robot-message'
+    },
+    {
+      id: '7',
       name: 'end-message',
       'cf-questions': 'Thanks for your time! Reload the page to start again.',
       tag: 'cf-robot-message'
     }
   ] satisfies FormlessTag[]
-
-  const tagsWithConditional: FormlessTag[] = [
-    {
-      id: '91369',
-      name: 'educaco',
-      'cf-questions': 'Qual o seu grau de escolaridade?',
-      children: [
-        {
-          tag: 'option',
-          value: 'Médio incompleto',
-          'cf-label': 'Médio incompleto'
-        },
-        {
-          tag: 'option',
-          value: 'Médio completo',
-          'cf-label': 'Médio completo'
-        },
-        {
-          tag: 'option',
-          value: 'Ensino técnico incompleto',
-          'cf-label': 'Ensino técnico incompleto'
-        },
-        {
-          tag: 'option',
-          value: 'Ensino técnico completo',
-          'cf-label': 'Ensino técnico completo'
-        },
-        {
-          tag: 'option',
-          value: 'Superior incompleto',
-          'cf-label': 'Superior incompleto'
-        },
-        {
-          tag: 'option',
-          value: 'Superior Completo',
-          'cf-label': 'Superior Completo'
-        },
-        {
-          tag: 'option',
-          value: 'Pós-graduação/MBA incompleto',
-          'cf-label': 'Pós-graduação/MBA incompleto'
-        },
-        {
-          tag: 'option',
-          value: 'Pós-graduação/MBA completo',
-          'cf-label': 'Pós-graduação/MBA completo'
-        },
-        {
-          tag: 'option',
-          value: 'Mestrado/Doutorado incompleto',
-          'cf-label': 'Mestrado/Doutorado incompleto'
-        },
-        {
-          tag: 'option',
-          value: 'Mestrado/Doutorado completo',
-          'cf-label': 'Mestrado/Doutorado completo'
-        }
-      ],
-      tag: 'select'
-    },
-    {
-      id: '91370',
-      name: 'education_institution',
-      'cf-questions':
-        'Ótimo. E qual é a instituição da sua graduação? (Exemplo: USP)',
-      'cf-conditional-educaco':
-        'Pós-graduação/MBA incompleto||Pós-graduação/MBA completo||Mestrado/Doutorado incompleto||Mestrado/Doutorado completo||Superior incompleto||Superior Completo',
-      tag: 'input',
-      type: 'text'
-    },
-    {
-      id: '5',
-      name: 'end-message',
-      'cf-questions': 'Thanks for your time! Reload the page to start again.',
-      tag: 'cf-robot-message'
-    }
-  ]
 
   const autoSaveKey = 'test'
 
@@ -159,7 +97,7 @@ const Chatbot: React.FC = () => {
 
   const { cfInstance } = useConversationalForm({
     validateAlreadyAnswered: {
-      questionVerificationTagId: '3',
+      questionVerificationTagId: '2',
       validate: (value: string) => value !== 'Yes',
       onInvalid
     },
@@ -168,7 +106,7 @@ const Chatbot: React.FC = () => {
     },
     autoSave: true,
     userAvatar: 'https://placehold.co/100x100',
-    tags: tagsWithConditional,
+    tags: tags as FormlessTag[],
     conversationalFormOptions: {
       // remove this option to show the log of the chatbot
       suppressLog: true
