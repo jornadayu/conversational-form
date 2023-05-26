@@ -1,7 +1,8 @@
 import {
   useConversationalForm,
   FormlessTag,
-  ConversationalForm
+  ConversationalForm,
+  Tag
 } from '@jornadayu/conversational-form'
 import '@jornadayu/conversational-form/dist/style.css'
 
@@ -69,6 +70,83 @@ const Chatbot: React.FC = () => {
     }
   ] satisfies FormlessTag[]
 
+  const tagsWithConditional: FormlessTag[] = [
+    {
+      id: '91369',
+      name: 'educaco',
+      'cf-questions': 'Qual o seu grau de escolaridade?',
+      children: [
+        {
+          tag: 'option',
+          value: 'Médio incompleto',
+          'cf-label': 'Médio incompleto'
+        },
+        {
+          tag: 'option',
+          value: 'Médio completo',
+          'cf-label': 'Médio completo'
+        },
+        {
+          tag: 'option',
+          value: 'Ensino técnico incompleto',
+          'cf-label': 'Ensino técnico incompleto'
+        },
+        {
+          tag: 'option',
+          value: 'Ensino técnico completo',
+          'cf-label': 'Ensino técnico completo'
+        },
+        {
+          tag: 'option',
+          value: 'Superior incompleto',
+          'cf-label': 'Superior incompleto'
+        },
+        {
+          tag: 'option',
+          value: 'Superior Completo',
+          'cf-label': 'Superior Completo'
+        },
+        {
+          tag: 'option',
+          value: 'Pós-graduação/MBA incompleto',
+          'cf-label': 'Pós-graduação/MBA incompleto'
+        },
+        {
+          tag: 'option',
+          value: 'Pós-graduação/MBA completo',
+          'cf-label': 'Pós-graduação/MBA completo'
+        },
+        {
+          tag: 'option',
+          value: 'Mestrado/Doutorado incompleto',
+          'cf-label': 'Mestrado/Doutorado incompleto'
+        },
+        {
+          tag: 'option',
+          value: 'Mestrado/Doutorado completo',
+          'cf-label': 'Mestrado/Doutorado completo'
+        }
+      ],
+      tag: 'select'
+    },
+    {
+      id: '91370',
+      name: 'education_institution',
+      'cf-questions':
+        'Ótimo. E qual é a instituição da sua graduação? (Exemplo: USP)',
+      'cf-conditional-educaco':
+        'Pós-graduação/MBA incompleto||Pós-graduação/MBA completo||Mestrado/Doutorado incompleto||Mestrado/Doutorado completo||Superior incompleto||Superior Completo',
+      tag: 'input',
+      type: 'text'
+    },
+    {
+      id: '5',
+      name: 'end-message',
+      'cf-questions': 'Thanks for your time! Reload the page to start again.',
+      tag: 'cf-robot-message'
+    }
+  ]
+
   const autoSaveKey = 'test'
 
   const onInvalid = (instance: ConversationalForm) => {
@@ -90,7 +168,7 @@ const Chatbot: React.FC = () => {
     },
     autoSave: true,
     userAvatar: 'https://placehold.co/100x100',
-    tags: tags,
+    tags: tagsWithConditional,
     conversationalFormOptions: {
       // remove this option to show the log of the chatbot
       suppressLog: true

@@ -142,7 +142,7 @@ export type FormlessTag = {
   multiple?: boolean
   children?: FormlessTagChild[]
   'cf-questions': string
-}
+} & { [key in `cf-conditional-${string}`]: string }
 
 export type FormlessTagChild = {
   tag?: 'option'
