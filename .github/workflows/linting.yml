@@ -4,12 +4,12 @@ on:
   pull_request:
     branches: [master]
     # Trigger only with changes to any code
-    paths: ['src/**']
+    paths: ['src/**', 'tests/**', '*.ts', '*.json']
 
   push:
     branches: [master]
     # Trigger only with changes to any code
-    paths: ['src/**']
+    paths: ['src/**', 'tests/**', '*.ts', '*.json']
 
 jobs:
   linting:
