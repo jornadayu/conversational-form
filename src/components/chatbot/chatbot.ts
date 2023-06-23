@@ -55,6 +55,7 @@ type Options = {
   /**
    * Validate already answered questions
    * @example
+   * This method will be called only on the question with the id 'email'
    * validateAlreadyAnswered: {
    *  questionVerificationTagId: 'email',
    *  validate: (email) => email !== 'email@example.com',
@@ -64,15 +65,34 @@ type Options = {
    *  },
    *  stopOnInvalid: true
    * }
+   * @example
+   * This method will be called on every question
+   * validateAlreadyAnswered: {
+   * validate: (email) => email !== 'email@example.com',
+   *  onInvalid: (instance) => {
+   *   instance.addRobotChatResponse('Email already used')
+   *   instance.stop()
+   *  },
+   *  stopOnInvalid: true
    *
    * @default undefined
    * */
   validateAlreadyAnswered?: {
-    questionVerificationTagId: string
-    validate: (answer: string) => Promise<boolean> | boolean
-    onInvalid: (instance: ConversationalFormCf) => void
+    validate: (
+      answer: string,
+      instance?: ConversationalFormCf,
+      currentQuestion?: MutableRefObject<FlowDTO | undefined>
+    ) => Promise<boolean> | boolean
+    onInvalid: (
+      instance: ConversationalFormCf,
+      currentQuestion: MutableRefObject<FlowDTO | undefined>
+    ) => {
+      continueChatbot?: boolean
+      callOnError?: boolean
+    } | void
     /** @default true */
     stopOnInvalid?: boolean
+    questionVerificationTagId?: string
   }
 }
 
@@ -159,7 +179,7 @@ export const useConversationalForm: UseConversationalForm = ({
         submitCallback() {
           submit()
         },
-        async flowStepCallback(dto, success) {
+        async flowStepCallback(dto, success, error) {
           currentQuestion.current = dto
           onStep?.(dto, answersRef.current)
 
@@ -170,21 +190,66 @@ export const useConversationalForm: UseConversationalForm = ({
             stopOnInvalid = true
           } = validateAlreadyAnswered || {}
 
-          if (
-            validateAlreadyAnswered &&
-            currentQuestion?.current?.tag?.id === questionVerificationTagId &&
-            currentQuestion.current.text
-          ) {
-            if (await validate?.(currentQuestion.current.text)) {
+          if (questionVerificationTagId) {
+            if (
+              validateAlreadyAnswered &&
+              currentQuestion?.current?.tag?.id === questionVerificationTagId &&
+              currentQuestion.current.text
+            ) {
+              if (await validate?.(currentQuestion.current.text)) {
+                addAnswer(dto)
+                success()
+              } else {
+                if (onInvalid) {
+                  const onValidation = onInvalid(instance, currentQuestion)
+                  if (stopOnInvalid) instance.stop()
+                  if (onValidation) {
+                    const { continueChatbot, callOnError } = onValidation
+                    if (continueChatbot && !callOnError) {
+                      addAnswer(dto)
+                      success()
+                    }
+                    if (callOnError) {
+                      error()
+                    }
+                  }
+                }
+              }
+            } else {
               addAnswer(dto)
               success()
-            } else {
-              onInvalid?.(instance)
-              if (stopOnInvalid) instance.stop()
             }
           } else {
-            addAnswer(dto)
-            success()
+            if (validateAlreadyAnswered && currentQuestion.current.text) {
+              if (
+                await validate?.(
+                  currentQuestion.current.text,
+                  instance,
+                  currentQuestion
+                )
+              ) {
+                addAnswer(dto)
+                success()
+              } else {
+                if (onInvalid) {
+                  const onValidation = onInvalid(instance, currentQuestion)
+                  if (stopOnInvalid) instance.stop()
+                  if (onValidation) {
+                    const { continueChatbot, callOnError } = onValidation
+                    if (continueChatbot && !callOnError) {
+                      addAnswer(dto)
+                      success()
+                    }
+                    if (callOnError) {
+                      error()
+                    }
+                  }
+                }
+              }
+            } else {
+              addAnswer(dto)
+              success()
+            }
           }
         },
         ...conversationalFormOptions
