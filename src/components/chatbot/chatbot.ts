@@ -68,10 +68,13 @@ type Options = {
    * @example
    * This method will be called on every question
    * validateAlreadyAnswered: {
-   * validate: (email) => email !== 'email@example.com',
-   *  onInvalid: (instance) => {
-   *   instance.addRobotChatResponse('Email already used')
-   *   instance.stop()
+   *  onInvalid: (instance, question, answer) => {
+   *  if (question.current?.tag?.id === 'email' && answer !== validEmail) {
+   *    instance.addRobotChatResponse('Your email is invalid.')
+   *    // In this case, we dont want to continue the chatbot, so we return false and call the onerror method to invalidate the answer and show the error message
+   *    return { continueChatbot: false, callOnError: true }
+   *    }
+   *  return { continueChatbot: true }
    *  },
    *  stopOnInvalid: true
    *
