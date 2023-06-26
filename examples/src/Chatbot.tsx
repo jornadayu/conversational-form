@@ -101,45 +101,40 @@ const Chatbot: React.FC = () => {
 
   const onInvalid = (
     instance: ConversationalForm,
-    question: MutableRefObject<FlowDTO | undefined>
+    question: MutableRefObject<FlowDTO | undefined>,
+    answer: string | undefined
   ) => {
-    const emailTag = instance.getTag('email')
-    const chatData = instance.getFormData(true)
-    const validEmail = 'email@example.com'
+    const validEmail = 'email@example.com' // This is just a example, you should use a regex or something to validate the email
 
-    // Made this because instance lose the reference of the tag when the page is reloaded
-    const emailAnswer =
-      answersRef.current.find((answer) => answer.name === 'email')?.answer ||
-      chatData['email'] ||
-      emailTag?.value
+    // Made this because instance lose the reference of the tag when the page is reloaded so its more safe to use this method
+    const emailAnswer = answersRef?.current?.find(
+      (answer) => answer.name === 'email'
+    )?.answer
 
-    if (
-      question.current?.tag?.id === 'email' &&
-      question.current?.text !== validEmail
-    ) {
+    if (question.current?.tag?.id === 'email' && answer !== validEmail) {
       instance.addRobotChatResponse('Your email is invalid.')
+      // In this case, we dont want to continue the chatbot, so we return false and call the onerror method to invalidate the answer and show the error message
       return { continueChatbot: false, callOnError: true }
     }
 
     if (
-      question.current?.text !== emailAnswer &&
+      answer !== emailAnswer &&
       question.current?.tag?.id === 'email-validation'
     ) {
       instance.addRobotChatResponse('Your email is not the same.')
+      // Same case as above
       return { continueChatbot: false, callOnError: true }
     }
 
     return { continueChatbot: true }
   }
 
-  const validateQuestion = (
-    answer: string,
-    instance?: ConversationalForm,
-    question?: MutableRefObject<FlowDTO | undefined>
-  ) => {
-    const tagIdsToValidate = ['email', 'email-validation']
-    if (tagIdsToValidate.includes(question?.current?.tag?.id as string)) {
-      // you can validate the answer here
+  // If this method exists and the key questionVerificationTagId is set, this method will be called to validate the answer
+  // This methods run before the onInvalid method and can only validate ONE question
+  // It's more safe and easy to use the onInvalid method only
+  const validateQuestion = (answer: string) => {
+    const emailExample = 'email@example.com'
+    if (answer !== emailExample) {
       return false
     }
     return true
@@ -147,8 +142,9 @@ const Chatbot: React.FC = () => {
 
   useConversationalForm({
     validateAlreadyAnswered: {
-      validate: validateQuestion,
-      onInvalid,
+      //questionVerificationTagId: 'email', // uncomment this line to use the validateQuestion method
+      //validate: validateQuestion, // uncomment this line to use the validateQuestion method
+      onInvalid: onInvalid,
       stopOnInvalid: false
     },
     onSubmit(data) {

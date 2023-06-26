@@ -78,14 +78,11 @@ type Options = {
    * @default undefined
    * */
   validateAlreadyAnswered?: {
-    validate: (
-      answer: string,
-      instance?: ConversationalFormCf,
-      currentQuestion?: MutableRefObject<FlowDTO | undefined>
-    ) => Promise<boolean> | boolean
+    validate?: (answer: string) => Promise<boolean> | boolean | undefined
     onInvalid: (
       instance: ConversationalFormCf,
-      currentQuestion: MutableRefObject<FlowDTO | undefined>
+      currentQuestion: MutableRefObject<FlowDTO | undefined>,
+      answer?: string
     ) => {
       continueChatbot?: boolean
       callOnError?: boolean
@@ -221,28 +218,21 @@ export const useConversationalForm: UseConversationalForm = ({
             }
           } else {
             if (validateAlreadyAnswered && currentQuestion.current.text) {
-              if (
-                await validate?.(
-                  currentQuestion.current.text,
+              if (onInvalid) {
+                const onValidation = onInvalid(
                   instance,
-                  currentQuestion
+                  currentQuestion,
+                  currentQuestion.current.text
                 )
-              ) {
-                addAnswer(dto)
-                success()
-              } else {
-                if (onInvalid) {
-                  const onValidation = onInvalid(instance, currentQuestion)
-                  if (stopOnInvalid) instance.stop()
-                  if (onValidation) {
-                    const { continueChatbot, callOnError } = onValidation
-                    if (continueChatbot && !callOnError) {
-                      addAnswer(dto)
-                      success()
-                    }
-                    if (callOnError) {
-                      error()
-                    }
+                if (stopOnInvalid) instance.stop()
+                if (onValidation) {
+                  const { continueChatbot, callOnError } = onValidation
+                  if (continueChatbot && !callOnError) {
+                    addAnswer(dto)
+                    success()
+                  }
+                  if (callOnError) {
+                    error()
                   }
                 }
               }
