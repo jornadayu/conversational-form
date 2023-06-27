@@ -86,10 +86,14 @@ type Options = {
       instance: ConversationalFormCf,
       currentQuestion: MutableRefObject<FlowDTO | undefined>,
       answer?: string
-    ) => {
-      continueChatbot?: boolean
-      callOnError?: boolean
-    } | void
+    ) =>
+      | {
+          continueChatbot?: boolean
+          callOnError?: boolean
+        }
+      | Promise<{ continueChatbot?: boolean; callOnError?: boolean }>
+      | void
+
     /** @default true */
     stopOnInvalid?: boolean
     questionVerificationTagId?: string
@@ -201,7 +205,11 @@ export const useConversationalForm: UseConversationalForm = ({
                 success()
               } else {
                 if (onInvalid) {
-                  const onValidation = onInvalid(instance, currentQuestion)
+                  const onValidation = await onInvalid(
+                    instance,
+                    currentQuestion,
+                    currentQuestion.current.text
+                  )
                   if (stopOnInvalid) instance.stop()
                   if (onValidation) {
                     const { continueChatbot, callOnError } = onValidation
@@ -222,7 +230,7 @@ export const useConversationalForm: UseConversationalForm = ({
           } else {
             if (validateAlreadyAnswered && currentQuestion.current.text) {
               if (onInvalid) {
-                const onValidation = onInvalid(
+                const onValidation = await onInvalid(
                   instance,
                   currentQuestion,
                   currentQuestion.current.text
