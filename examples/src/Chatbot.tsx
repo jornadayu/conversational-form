@@ -95,10 +95,6 @@ const Chatbot: React.FC = () => {
 
   const autoSaveKey = 'test'
 
-  const answersRef = useRef<Answer[]>(
-    JSON.parse(localStorage.getItem(autoSaveKey) || '[]')
-  )
-
   const onInvalid = (
     instance: ConversationalForm,
     question: MutableRefObject<FlowDTO | undefined>,
@@ -140,7 +136,7 @@ const Chatbot: React.FC = () => {
     return true
   }
 
-  useConversationalForm({
+  const { answersRef } = useConversationalForm({
     validateAlreadyAnswered: {
       //questionVerificationTagId: 'email', // uncomment this line to use the validateQuestion method
       //validate: validateQuestion, // uncomment this line to use the validateQuestion method
