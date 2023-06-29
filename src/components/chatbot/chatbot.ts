@@ -104,6 +104,7 @@ export type UseConversationalForm = {
   (options: Options): {
     cfInstance: MutableRefObject<ConversationalFormCf | undefined>
     currentQuestion: MutableRefObject<FlowDTO | undefined>
+    answersRef: MutableRefObject<Answer[]>
     startedAt: MutableRefObject<Date | undefined>
     finishedAt: MutableRefObject<Date | undefined>
     startBot: () => void
@@ -332,6 +333,7 @@ export const useConversationalForm: UseConversationalForm = ({
 
   return {
     cfInstance,
+    answersRef,
     currentQuestion,
     startBot,
     startedAt,
