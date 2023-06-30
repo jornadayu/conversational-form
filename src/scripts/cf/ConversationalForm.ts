@@ -137,6 +137,10 @@ export type FormlessTagType =
 export type FormlessTag = {
   tag: 'input' | 'cf-robot-message' | 'select'
   type?: FormlessTagType
+  /**
+   * @default false
+   */
+  required?: boolean
   name: string
   id?: string
   multiple?: boolean
