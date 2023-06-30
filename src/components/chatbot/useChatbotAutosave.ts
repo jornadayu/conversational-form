@@ -88,14 +88,29 @@ export const useChatbotAutoSave = (
         'question'
     }
 
-    const newAnswers = [...answersRef.current, newAnswer]
+    const answerAlreadyExists = answersRef.current.some(
+      (answer) => answer.question === newAnswer.question
+    )
 
-    if (active && dto.tag.id !== confidentialConfirmTagName) {
-      // Persistent Auto-save
-      localStorage.setItem(localKey, JSON.stringify(newAnswers))
+    if (!answerAlreadyExists) {
+      const newAnswers = [...answersRef.current, newAnswer]
+
+      if (active && dto.tag.id !== confidentialConfirmTagName) {
+        // Persistent Auto-save
+        localStorage.setItem(localKey, JSON.stringify(newAnswers))
+      }
+
+      answersRef.current = newAnswers
+    } else {
+      const index = answersRef.current.findIndex((answer) => {
+        return answer.question === newAnswer.question
+      })
+      answersRef.current[index] = newAnswer
+      if (active && dto.tag.id !== confidentialConfirmTagName) {
+        // Persistent Auto-save
+        localStorage.setItem(localKey, JSON.stringify(answersRef.current))
+      }
     }
-
-    answersRef.current = newAnswers
   }
 
   const clearAnswers = () => {

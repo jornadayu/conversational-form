@@ -20,13 +20,15 @@ const Chatbot: React.FC = () => {
       name: 'email',
       id: 'email',
       'cf-questions': 'Whats your email? (email@example.com)',
-      tag: 'input'
+      tag: 'input',
+      required: true
     },
     {
       name: 'email-validation',
       id: 'email-validation',
       'cf-questions': 'Please, type your email again.',
-      tag: 'input'
+      tag: 'input',
+      required: true
     },
     {
       id: '2',
@@ -100,14 +102,16 @@ const Chatbot: React.FC = () => {
     question: MutableRefObject<FlowDTO | undefined>,
     answer: string | undefined
   ) => {
-    const validEmail = 'email@example.com' // This is just a example, you should use a regex or something to validate the email
+    const validEmail = ['email@example.com', 'email@teste.com'] // This is just a example, you should use a regex or something to validate the email
 
     // Made this because instance lose the reference of the tag when the page is reloaded so its more safe to use this method
     const emailAnswer = answersRef?.current?.find(
       (answer) => answer.name === 'email'
     )?.answer
-
-    if (question.current?.tag?.id === 'email' && answer !== validEmail) {
+    if (
+      question.current?.tag?.id === 'email' &&
+      !validEmail.includes(answer as string)
+    ) {
       instance.addRobotChatResponse('Your email is invalid.')
       // In this case, we dont want to continue the chatbot, so we return false and call the onerror method to invalidate the answer and show the error message
       return { continueChatbot: false, callOnError: true }
