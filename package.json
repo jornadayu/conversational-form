@@ -24,7 +24,7 @@
     "provenance": true
   },
   "scripts": {
-    "build": "NODE_OPTIONS=--max-old-space-size=8096 vite build && yarn build:types",
+    "build": "NODE_OPTIONS=--max-old-space-size=8096 vite build && yarn build:types && cp -r ./assets ./dist",
     "build:types": "tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist || exit 0",
     "example": "yarn build && cd examples && yarn && yarn start",
     "lint": "eslint \"./src/**/*.{ts,tsx,js,jsx}\"",
